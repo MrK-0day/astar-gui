@@ -8,7 +8,7 @@ class Interface(object):
     def __init__(self):
         self.animate = True
         self.options = ("rook","queen","knight")
-        self.piece_type = "rook"
+        self.piece_type = "queen"
         self.cell_size = (20,20)
         self.image = self.make_background()
         self.reset()

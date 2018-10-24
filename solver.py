@@ -1,22 +1,26 @@
 import pygame as pg
 import math
 
-ARA = 1
+ARA = 2
 
 ADJACENTS = {"rook"   : [(1,0),(-1,0),(0,1),(0,-1)],
              "queen"  : [(1,0),(-1,0),(0,1),(0,-1),(1,1),(1,-1),(-1,1),(-1,-1)],
              "knight" : [(1,-2),(1,2),(-1,-2),(-1,2),(2,1),(2,-1),(-2,1),(-2,-1)]}
 
-def rook(x,y):
-    (x1,y1) = x
-    (x2,y2) = y
-    return math.sqrt(abs(x1-x2)**2 + abs(y1-y2)**2)
-def queen(x,y):
+def rook(x,y,s,c):
     (x1,y1) = x
     (x2,y2) = y
     a,b = abs(x1-x2),abs(y1-y2)
-    return max(a,b)
-def knight(x,y):
+    return math.sqrt(a**2 + b**2)
+def queen(x,y,s,c):
+    (x1,y1) = x
+    (x2,y2) = y
+    a,b = abs(x1-x2),abs(y1-y2)
+    # HEURISTICS
+    hrt = math.sqrt(a * a + b * b)
+    return hrt
+    # return max(a,b)
+def knight(x,y,s,c):
     (x1,y1) = x
     (x2,y2) = y
     a,b = abs(x1-x2),abs(y1-y2)
@@ -56,6 +60,7 @@ class Star(object):
 
     def follow_current_path(self):
         next_cell = None
+        heuristicsum = 0
         for cell in self.get_neighbors():
             tentative_gx = self.gx[self.current]+1
             if cell not in self.open_set:
@@ -70,7 +75,7 @@ class Star(object):
                 x,y = abs(self.end[0]-cell[0]),abs(self.end[1]-cell[1])
                 self.came_from[cell] = self.current
                 self.gx[cell] = tentative_gx
-                self.hx[cell] = ARA * self.heuristic(cell,self.end)
+                self.hx[cell] = ARA * self.heuristic(cell,self.end,self.start,heuristicsum)
                 self.fx[cell] = self.gx[cell]+self.hx[cell]
                 if not next_cell or self.fx[cell]<self.fx[next_cell]:
                     next_cell = cell
